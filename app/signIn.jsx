@@ -14,71 +14,79 @@ export default function SignInScreen() {
   const router = useRouter();
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={require('../assets/images/logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <Text style={styles.title}>Welcome Back</Text>
-      <Text style={styles.subtitle}>Sign in to continue</Text>
-
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        placeholderTextColor="#999"
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        placeholderTextColor="#999"
-        secureTextEntry
-      />
-
-      <TouchableOpacity style={styles.forgotButton}>
-        <Text style={styles.forgotText}>Forgot Password?</Text>
-      </TouchableOpacity>
-
-      <TouchableOpacity
-        style={styles.signinButton}
-        onPress={() => alert('Signed in!')}
-      >
-        <Text style={styles.signinText}>Sign In</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.orText}>──────── OR ────────</Text>
-
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={() => alert('Google Sign In')}
-      >
+    <ScrollView contentContainerStyle={styles.scroll}>
+      <View style={styles.container}>
         <Image
-          source={{
-            uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
-          }}
-          style={styles.googleIcon}
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
         />
-        <Text style={styles.googleText}>Sign in with Google</Text>
-      </TouchableOpacity>
 
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/signUp')}>
-          <Text style={styles.signupLink}> Sign Up</Text>
+        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.subtitle}>Sign in to continue</Text>
+
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          placeholderTextColor="#999"
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.forgotButton}>
+          <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.signinButton}
+          onPress={() => alert('Signed in!')}
+        >
+          <Text style={styles.signinText}>Sign In</Text>
+        </TouchableOpacity>
+
+        <Text style={styles.orText}>──────── OR ────────</Text>
+
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={() => alert('Google Sign In')}
+        >
+          <Image
+            source={{
+              uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
+            }}
+            style={styles.googleIcon}
+          />
+          <Text style={styles.googleText}>Sign in with Google</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/signUp')}>
+            <Text style={styles.signupLink}> Sign Up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scroll: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  container: {
     alignItems: 'center',
     padding: 20,
-    paddingTop: 60,
+    backgroundColor: '#fff',
+    width: '100%',
+    maxWidth: 400,
+    alignSelf: 'center',
   },
   logo: {
     width: 150,
