@@ -21,112 +21,121 @@ export default function SignUpScreen() {
 
   const handleSignUp = () => {
     if (!fullName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields.');
+      Alert.alert('Error', 'Please fill all fields');
       return;
     }
 
     if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match.');
+      Alert.alert('Error', 'Passwords do not match');
       return;
     }
 
     Alert.alert('Success', 'Account created successfully!');
-    router.push('/signin'); 
+    router.push('/signin');
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
-      <Image
-        source={require('../assets/images/logo.png')}
-        style={styles.logo}
-        resizeMode="contain"
-      />
-
-      <Text style={styles.title}>Create Account</Text>
-      <Text style={styles.subtitle}>Sign up to get started</Text>
-
-      <TextInput
-        placeholder="Full Name"
-        style={styles.input}
-        placeholderTextColor="#999"
-        value={fullName}
-        onChangeText={setFullName}
-      />
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        placeholderTextColor="#999"
-        value={email}
-        onChangeText={setEmail}
-        keyboardType="email-address"
-        autoCapitalize="none"
-      />
-      <TextInput
-        placeholder="Password"
-        style={styles.input}
-        placeholderTextColor="#999"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <TextInput
-        placeholder="Confirm Password"
-        style={styles.input}
-        placeholderTextColor="#999"
-        value={confirmPassword}
-        onChangeText={setConfirmPassword}
-        secureTextEntry
-      />
-
-      <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
-        <Text style={styles.signupButtonText}>Sign Up</Text>
-      </TouchableOpacity>
-
-      <Text style={styles.orText}>──────── OR ────────</Text>
-
-      <TouchableOpacity
-        style={styles.googleButton}
-        onPress={() => alert('Google Sign Up')}
-      >
+    <ScrollView contentContainerStyle={styles.scrollContainer}>
+      <View style={styles.contentContainer}>
         <Image
-          source={{
-            uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
-          }}
-          style={styles.googleIcon}
+          source={require('../assets/images/logo.png')}
+          style={styles.logo}
+          resizeMode="contain"
         />
-        <Text style={styles.googleText}>Sign up with Google</Text>
-      </TouchableOpacity>
 
-      <View style={styles.signinContainer}>
-        <Text style={styles.signinText}>Already have an account?</Text>
-        <TouchableOpacity onPress={() => router.push('/signIn')}>
-          <Text style={styles.signinLink}> Sign In</Text>
+        <Text style={styles.title}>Create Account</Text>
+        <Text style={styles.subtitle}>Sign up to get started</Text>
+
+        <TextInput
+          placeholder="Full Name"
+          style={styles.input}
+          placeholderTextColor="#999"
+          value={fullName}
+          onChangeText={setFullName}
+        />
+        <TextInput
+          placeholder="Email"
+          style={styles.input}
+          placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
+          keyboardType="email-address"
+          autoCapitalize="none"
+        />
+        <TextInput
+          placeholder="Password"
+          style={styles.input}
+          placeholderTextColor="#999"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <TextInput
+          placeholder="Confirm Password"
+          style={styles.input}
+          placeholderTextColor="#999"
+          value={confirmPassword}
+          onChangeText={setConfirmPassword}
+          secureTextEntry
+        />
+
+        <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
+          <Text style={styles.signupButtonText}>Sign Up</Text>
         </TouchableOpacity>
+
+        <Text style={styles.orText}>──────── OR ────────</Text>
+
+        <TouchableOpacity
+          style={styles.googleButton}
+          onPress={() => alert('Google Sign Up')}
+        >
+          <Image
+            source={{
+              uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
+            }}
+            style={styles.googleIcon}
+          />
+          <Text style={styles.googleText}>Sign up with Google</Text>
+        </TouchableOpacity>
+
+        <View style={styles.signinContainer}>
+          <Text style={styles.signinText}>Already have an account?</Text>
+          <TouchableOpacity onPress={() => router.push('/signIn')}>
+            <Text style={styles.signinLink}> Sign In</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
+  scrollContainer: {
     flexGrow: 1,
-    backgroundColor: '#fff',
+    width: '100%',
+  },
+  contentContainer: {
+    flex: 1,
+    justifyContent: 'center',
     alignItems: 'center',
     padding: 20,
-    paddingTop: 60,
+    maxWidth: 400,
+    width: '100%',
+    marginHorizontal: 'auto',
   },
   logo: {
-    width: 150,
-    height: 150,
-    marginBottom: 30,
+    width: 120,
+    height: 120,
+    marginBottom: 20,
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: '700',
     color: '#1E1E1E',
+    marginBottom: 5,
   },
   subtitle: {
-    fontSize: 16,
+    fontSize: 14,
     color: '#666',
     marginBottom: 30,
   },
