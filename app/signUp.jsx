@@ -38,7 +38,7 @@ export default function SignUpScreen() {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.contentContainer}>
         <Image
-          source={require('../assets/images/logo.png')}
+          source={require('../assets/images/logo-removebg-preview.png')}
           style={styles.logo}
           resizeMode="contain"
         />
