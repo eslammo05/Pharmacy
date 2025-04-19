@@ -10,16 +10,18 @@ import {
   Alert,
 } from 'react-native';
 import { useRouter } from 'expo-router';
+import { auth, db } from '../firebase/config';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc } from 'firebase/firestore';
 
 export default function SignUpScreen() {
   const router = useRouter();
-
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignUp = () => {
+  const handleSignUp = async () => {
     if (!fullName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
@@ -30,8 +32,21 @@ export default function SignUpScreen() {
       return;
     }
 
-    Alert.alert('Success', 'Account created successfully!');
-    router.push('/signin');
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      await setDoc(doc(db, 'users', user.uid), {
+        fullName,
+        email,
+        uid: user.uid
+      });
+
+      Alert.alert('Success', 'Account created successfully!');
+      router.push('/signIn');
+    } catch (error) {
+      Alert.alert('Error', error.message);
+    }
   };
 
   return (
