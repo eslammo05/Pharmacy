@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from "react";
+import { auth } from "../firebase/config";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import {
   View,
   Text,
@@ -7,17 +9,29 @@ import {
   Image,
   StyleSheet,
   ScrollView,
-} from 'react-native';
-import { useRouter } from 'expo-router';
+} from "react-native";
+import { useRouter } from "expo-router";
 
 export default function SignInScreen() {
   const router = useRouter();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSignIn = async () => {
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+      alert("Signed in successfully!");
+      router.push("./(tabs)");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
       <View style={styles.container}>
         <Image
-          source={require('../assets/images/logo.png')}
+          source={require("../assets/images/logo.png")}
           style={styles.logo}
           resizeMode="contain"
         />
@@ -29,12 +43,16 @@ export default function SignInScreen() {
           placeholder="Email"
           style={styles.input}
           placeholderTextColor="#999"
+          value={email}
+          onChangeText={setEmail}
         />
         <TextInput
           placeholder="Password"
           style={styles.input}
           placeholderTextColor="#999"
           secureTextEntry
+          value={password}
+          onChangeText={setPassword}
         />
 
         <TouchableOpacity style={styles.forgotButton}>
@@ -43,7 +61,7 @@ export default function SignInScreen() {
 
         <TouchableOpacity
           style={styles.signinButton}
-          onPress={() => alert('Signed in!')}
+          onPress={handleSignIn}
         >
           <Text style={styles.signinText}>Sign In</Text>
         </TouchableOpacity>
@@ -52,11 +70,11 @@ export default function SignInScreen() {
 
         <TouchableOpacity
           style={styles.googleButton}
-          onPress={() => alert('Google Sign In')}
+          onPress={() => alert("Google Sign In")}
         >
           <Image
             source={{
-              uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
+              uri: "https://img.icons8.com/color/48/000000/google-logo.png",
             }}
             style={styles.googleIcon}
           />
@@ -65,7 +83,7 @@ export default function SignInScreen() {
 
         <View style={styles.signupContainer}>
           <Text style={styles.signupText}>Don't have an account?</Text>
-          <TouchableOpacity onPress={() => router.push('/signUp')}>
+          <TouchableOpacity onPress={() => router.push("/signUp")}>
             <Text style={styles.signupLink}> Sign Up</Text>
           </TouchableOpacity>
         </View>
@@ -77,16 +95,16 @@ export default function SignInScreen() {
 const styles = StyleSheet.create({
   scroll: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   container: {
-    alignItems: 'center',
+    alignItems: "center",
     padding: 20,
-    backgroundColor: '#fff',
-    width: '100%',
+    backgroundColor: "#fff",
+    width: "100%",
     maxWidth: 400,
-    alignSelf: 'center',
+    alignSelf: "center",
   },
   logo: {
     width: 150,
@@ -95,58 +113,58 @@ const styles = StyleSheet.create({
   },
   title: {
     fontSize: 28,
-    fontWeight: '700',
-    color: '#1E1E1E',
+    fontWeight: "700",
+    color: "#1E1E1E",
   },
   subtitle: {
     fontSize: 16,
-    color: '#666',
+    color: "#666",
     marginBottom: 30,
   },
   input: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
     paddingHorizontal: 15,
     fontSize: 16,
-    color: '#333',
+    color: "#333",
     marginBottom: 15,
   },
   forgotButton: {
-    alignSelf: 'flex-end',
+    alignSelf: "flex-end",
     marginBottom: 20,
   },
   forgotText: {
-    color: '#007BFF',
+    color: "#007BFF",
     fontSize: 14,
   },
   signinButton: {
-    width: '100%',
+    width: "100%",
     height: 50,
-    backgroundColor: '#007BFF',
+    backgroundColor: "#007BFF",
     borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     marginBottom: 20,
   },
   signinText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 16,
-    fontWeight: '600',
+    fontWeight: "600",
   },
   orText: {
-    color: '#999',
+    color: "#999",
     marginVertical: 10,
   },
   googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
+    flexDirection: "row",
+    alignItems: "center",
+    backgroundColor: "#F5F5F5",
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 20,
-    width: '100%',
+    width: "100%",
   },
   googleIcon: {
     width: 24,
@@ -155,17 +173,17 @@ const styles = StyleSheet.create({
   },
   googleText: {
     fontSize: 16,
-    color: '#333',
+    color: "#333",
   },
   signupContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     marginTop: 25,
   },
   signupText: {
-    color: '#666',
+    color: "#666",
   },
   signupLink: {
-    color: '#007BFF',
-    fontWeight: '600',
+    color: "#007BFF",
+    fontWeight: "600",
   },
 });
