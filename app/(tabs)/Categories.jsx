@@ -67,6 +67,17 @@ export default function CategoriesScreen() {
           <Text style={styles.searchButtonText}>🔍</Text>
         </TouchableOpacity>
       </View>
+      {searchQuery.length > 0 && (
+  <TouchableOpacity
+    onPress={() => {
+      setFilteredCategories(categories);
+      setSearchQuery('');
+    }}
+    style={styles.clearButton}
+  >
+    <Text style={styles.clearButtonText}> ➡️ </Text>
+  </TouchableOpacity>
+)}
 
       {/* Categories */}
       <Text style={styles.sectionTitle}>Categories</Text>
