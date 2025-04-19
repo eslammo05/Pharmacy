@@ -1,5 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, FlatList, Dimensions, TouchableOpacity, TextInput } from 'react-native';
+import {
+  View,
+  Text,
+  ScrollView,
+  StyleSheet,
+  FlatList,
+  TouchableOpacity,
+  TextInput,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 
 const categories = [
@@ -54,7 +62,7 @@ export default function CategoriesScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Search Input + Button */}
+      {/* Search Input + Button + Clear */}
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Search categories..."
@@ -63,45 +71,57 @@ export default function CategoriesScreen() {
           value={searchQuery}
           onChangeText={setSearchQuery}
         />
+
         <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
           <Text style={styles.searchButtonText}>🔍</Text>
         </TouchableOpacity>
+
+        {searchQuery.length > 0 && (
+          <TouchableOpacity
+            onPress={() => {
+              setFilteredCategories(categories);
+              setSearchQuery('');
+            }}
+            style={styles.clearButton}
+          >
+            <Text style={styles.clearButtonText}>←</Text>
+          </TouchableOpacity>
+        )}
       </View>
-      {searchQuery.length > 0 && (
-  <TouchableOpacity
-    onPress={() => {
-      setFilteredCategories(categories);
-      setSearchQuery('');
-    }}
-    style={styles.clearButton}
-  >
-    <Text style={styles.clearButtonText}> ➡️ </Text>
-  </TouchableOpacity>
-)}
 
       {/* Categories */}
       <Text style={styles.sectionTitle}>Categories</Text>
-      <FlatList
-        data={filteredCategories}
-        renderItem={({ item }) => (
-          <View style={styles.categoryCard}>
-            <Text style={styles.categoryCardText}>{item.name}</Text>
-          </View>
-        )}
-        keyExtractor={item => item.id}
-        numColumns={2}
-        columnWrapperStyle={styles.categoryRow}
-        scrollEnabled={false}
-      />
+      {filteredCategories.length > 0 ? (
+        <FlatList
+          data={filteredCategories}
+          renderItem={({ item }) => (
+            <View style={styles.categoryCard}>
+              <Text style={styles.categoryCardText}>{item.name}</Text>
+            </View>
+          )}
+          keyExtractor={item => item.id}
+          numColumns={2}
+          columnWrapperStyle={styles.categoryRow}
+          scrollEnabled={false}
+        />
+      ) : (
+        <Text style={styles.notFoundText}>No categories found</Text>
+      )}
 
       {/* Products */}
-      <Text style={styles.sectionTitle}>Products {title ? `(${title})` : ''}</Text>
-      <FlatList
-        data={filteredProducts}
-        renderItem={({ item }) => <ProductItem item={item} />}
-        keyExtractor={item => item.id}
-        scrollEnabled={false}
-      />
+      <Text style={styles.sectionTitle}>
+        Products {title ? `(${title})` : ''}
+      </Text>
+      {filteredProducts.length > 0 ? (
+        <FlatList
+          data={filteredProducts}
+          renderItem={({ item }) => <ProductItem item={item} />}
+          keyExtractor={item => item.id}
+          scrollEnabled={false}
+        />
+      ) : (
+        <Text style={styles.notFoundText}>No products found</Text>
+      )}
     </ScrollView>
   );
 }
@@ -153,16 +173,30 @@ const styles = StyleSheet.create({
   },
   searchButton: {
     height: 45,
-    paddingHorizontal: 20,
+    paddingHorizontal: 15,
+    backgroundColor: '#007bff',
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
+  },
+  searchButtonText: {
+    color: '#fff',
+    fontSize: 18,
+  },
+  clearButton: {
+    height: 45,
+    paddingHorizontal: 15,
     backgroundColor: '#007bff',
     justifyContent: 'center',
     alignItems: 'center',
     borderTopRightRadius: 10,
     borderBottomRightRadius: 10,
   },
-  searchButtonText: {
+  clearButtonText: {
     color: '#fff',
     fontSize: 18,
+    fontWeight: 'bold',
   },
   categoryRow: {
     justifyContent: 'space-between',
@@ -195,5 +229,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#2A3F54',
     fontWeight: '500',
+  },
+  notFoundText: {
+    textAlign: 'center',
+    color: '#999',
+    fontSize: 16,
+    marginTop: 20,
   },
 });
