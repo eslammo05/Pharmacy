@@ -36,7 +36,7 @@ export default function SignInScreen() {
           resizeMode="contain"
         />
 
-        <Text style={styles.title}>Welcome Back</Text>
+        <Text style={styles.title}>Welcome </Text>
         <Text style={styles.subtitle}>Sign in to continue</Text>
 
         <TextInput
