@@ -22,6 +22,8 @@ export default function SignUpScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const handleSignUp = async () => {
+    console.log('Signup function triggered');
+
     if (!fullName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
@@ -39,12 +41,22 @@ export default function SignUpScreen() {
       await setDoc(doc(db, 'users', user.uid), {
         fullName,
         email,
-        uid: user.uid
+        uid: user.uid,
       });
 
-      Alert.alert('Success', 'Account created successfully!');
-      router.push('/signIn');
+      console.log('Account created successfully');
+
+      Alert.alert('Success', 'Account created successfully!', [
+        {
+          text: 'OK',
+          onPress: () => {
+            console.log('Navigating to signIn...');
+            router.replace('/signIn');
+          },
+        },
+      ]);
     } catch (error) {
+      console.log('Signup Error:', error.message);
       Alert.alert('Error', error.message);
     }
   };
