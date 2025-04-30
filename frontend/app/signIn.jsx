@@ -59,7 +59,10 @@ export default function SignInScreen() {
           <Text style={styles.forgotText}>Forgot Password?</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.signinButton} onPress={handleSignIn}>
+        <TouchableOpacity
+          style={styles.signinButton}
+          onPress={handleSignIn}
+        >
           <Text style={styles.signinText}>Sign In</Text>
         </TouchableOpacity>
 
