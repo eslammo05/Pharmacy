@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.MyFirstApp",
+      "package": "com.anonymous.MyFirstApp"
       
     },
     "web": {

@@ -1,3 +1,4 @@
+//Home page
 import React from 'react';
 import { useRouter } from 'expo-router';
 import {
@@ -75,7 +76,7 @@ export default function HomeScreen() {
         <TouchableOpacity style={styles.headerIcon}>
           <Text style={{ color: '#fff' }}>🔔</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.headerIcon} onPress={() => router.push('/cart')}>
+        <TouchableOpacity style={styles.headerIcon} onPress={() => router.push('/cart')}> 
           <Text style={{ color: '#fff' }}>🛒</Text>
         </TouchableOpacity>
       </View>
