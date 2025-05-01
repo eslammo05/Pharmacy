@@ -1,4 +1,5 @@
-import React, { useState, useRef } from 'react';
+import React, { useState } from 'react';
+import { useRouter } from 'expo-router';
 import {
   View,
   Text,
@@ -7,12 +8,8 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
-
-const { width } = Dimensions.get('window');
 
 const originalCategories = [
   { id: '1', title: 'Allopathy', icon: 'medkit' },
@@ -26,23 +23,12 @@ const originalFeatured = [
   { id: '2', name: 'Vitamin C', price: '35 EGP', description: 'Natural immune booster.' },
 ];
 
-// صور البانر اللي انت رفعتها
-const bannerImages = [
-  require('../(tabs)/image0.png'),
-  require('../(tabs)/image1.png'),
-  require('../(tabs)/image2.png'),
-  require('../(tabs)/image3.png'),
-];
-
 export default function HomeScreen() {
   const router = useRouter();
-
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCategories, setFilteredCategories] = useState(originalCategories);
   const [filteredProducts, setFilteredProducts] = useState(originalFeatured);
   const [isSearching, setIsSearching] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const flatListRef = useRef();
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
@@ -67,38 +53,50 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header */}
+      {/* Header with Welcome Message and Auth Button */}
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Welcome to our pharmacy</Text>
-        <TouchableOpacity onPress={() => router.push('/cart')}>
-          <Ionicons name="cart-outline" size={24} color="#fff" />
-        </TouchableOpacity>
+        <View style={styles.headerButtons}>
+          <TouchableOpacity 
+            style={styles.authButton}
+            onPress={() => router.push('/profile')}
+          >
+            <Text style={styles.authButtonText}>Sign In/Register</Text>
+          </TouchableOpacity>
+          <TouchableOpacity 
+            style={styles.cartButton}
+            onPress={() => router.push('/cart')}
+          >
+            <Ionicons name="cart-outline" size={20} color="#fff" />
+          </TouchableOpacity>
+        </View>
       </View>
 
-      {/* Search Input + Buttons */}
+      {/* Search Bar */}
       <View style={styles.searchContainer}>
         <TextInput
-          placeholder="Search..."
-          placeholderTextColor="#ccc"
+          placeholder="Search products..."
+          placeholderTextColor="#999"
           style={styles.searchInput}
           value={searchQuery}
           onChangeText={setSearchQuery}
+          onSubmitEditing={handleSearch}
         />
         <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-          <Ionicons name="search" size={20} color="#fff" />
+          <Ionicons name="search" size={20} color="black" />
         </TouchableOpacity>
         {isSearching && (
           <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-            <Ionicons name="arrow-back" size={20} color="#fff" />
+            <Ionicons name="close" size={20} color="black" />
           </TouchableOpacity>
         )}
       </View>
 
-      <ScrollView>
+      <ScrollView style={styles.content}>
         {/* Banner */}
         <View style={styles.banner}>
-          <Text style={styles.bannerTitle}>عرض لفترة محدودة</Text>
-          <Text style={styles.bannerSubtitle}>خصومات حتى 50%</Text>
+          <Text style={styles.bannerTitle}>Limited Time Offer</Text>
+          <Text style={styles.bannerSubtitle}>Discounts up to 50%</Text>
           <TouchableOpacity style={styles.bannerButton}>
             <Text style={styles.bannerButtonText}>Shop Now</Text>
           </TouchableOpacity>
@@ -134,8 +132,8 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingHorizontal: 10 }}
         />
 
-        {/* Featured */}
-        <Text style={styles.sectionHeader}>منتجات مميزة</Text>
+        {/* Featured Products */}
+        <Text style={styles.sectionHeader}>Featured Products</Text>
         <FlatList
           data={filteredProducts}
           horizontal
@@ -172,24 +170,20 @@ const styles = StyleSheet.create({
     flex: 1, 
     backgroundColor: '#fff' 
   },
-  searchHeader: {
-    backgroundColor: '#007bff',
-    paddingTop: 50,
-    paddingBottom: 15,
-    paddingHorizontal: 15,
-  },
-  searchHeaderContent: {
+  header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 15,
+    padding: 15,
+    paddingTop: 50,
+    backgroundColor: '#007bff',
   },
-  searchHeaderTitle: {
+  headerTitle: {
     fontSize: 20,
     color: '#fff',
     fontWeight: 'bold',
   },
-  headerIconsContainer: {
+  headerButtons: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: 10,
@@ -213,57 +207,41 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  content: {
-    marginTop: 0,
-  },
   searchContainer: {
     flexDirection: 'row',
+    margin: 15,
     alignItems: 'center',
+    position: 'relative',
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f1f1f1',
     borderRadius: 25,
     paddingHorizontal: 20,
     height: 45,
     fontSize: 16,
     color: '#000',
-    elevation: 2,
   },
   searchButton: {
     position: 'absolute',
     right: 15,
-    backgroundColor: 'white',
     height: 45,
     width: 45,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
   resetButton: {
     position: 'absolute',
     right: 65,
-    backgroundColor: '#ccc',
     height: 25,
     width: 25,
-    borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  bannerSlider: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
+  content: {
+    marginBottom: 10,
   },
-  sliderImage: {
-    width: width,
-    height: 200,
-  },
-  arrow: {
-    paddingHorizontal: 5,
-  },
-  bannerText: {
+  banner: {
     backgroundColor: '#eaf7ff',
     margin: 15,
     borderRadius: 12,
