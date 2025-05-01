@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -9,8 +8,12 @@ import {
   FlatList,
   TouchableOpacity,
   Dimensions,
+  Image,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+const { width } = Dimensions.get('window');
 
 const originalCategories = [
   { id: '1', title: 'Allopathy', icon: 'medkit' },
@@ -24,17 +27,25 @@ const originalFeatured = [
   { id: '2', name: 'Vitamin C', price: '35 EGP', description: 'مقوي طبيعي للمناعة.' },
 ];
 
+// صور البانر اللي انت رفعتها
+const bannerImages = [
+  require('../(tabs)/image0.png'),
+  require('../(tabs)/image1.png'),
+  require('../(tabs)/image2.png'),
+  require('../(tabs)/image3.png'),
+];
+
 export default function HomeScreen() {
   const router = useRouter();
-
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCategories, setFilteredCategories] = useState(originalCategories);
   const [filteredProducts, setFilteredProducts] = useState(originalFeatured);
   const [isSearching, setIsSearching] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef();
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
-
     const matchedCategories = originalCategories.filter(cat =>
       cat.title.toLowerCase().includes(query)
     );
@@ -54,6 +65,18 @@ export default function HomeScreen() {
     setIsSearching(false);
   };
 
+  const goToNextSlide = () => {
+    const nextIndex = (currentIndex + 1) % bannerImages.length;
+    setCurrentIndex(nextIndex);
+    flatListRef.current?.scrollToIndex({ index: nextIndex });
+  };
+
+  const goToPrevSlide = () => {
+    const prevIndex = (currentIndex - 1 + bannerImages.length) % bannerImages.length;
+    setCurrentIndex(prevIndex);
+    flatListRef.current?.scrollToIndex({ index: prevIndex });
+  };
+
   return (
     <View style={styles.container}>
       {/* Header */}
@@ -64,7 +87,7 @@ export default function HomeScreen() {
         </TouchableOpacity>
       </View>
 
-      {/* Search Input + Buttons */}
+      {/* Search */}
       <View style={styles.searchContainer}>
         <TextInput
           placeholder="Search..."
@@ -84,8 +107,40 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView>
-        {/* Banner */}
-        <View style={styles.banner}>
+        {/* Banner Slider */}
+        <View style={styles.bannerSlider}>
+          <TouchableOpacity onPress={goToPrevSlide} style={styles.arrow}>
+            <Ionicons name="chevron-back" size={24} color="#007bff" />
+          </TouchableOpacity>
+
+          <FlatList
+            ref={flatListRef}
+            data={bannerImages}
+            horizontal
+            pagingEnabled
+            showsHorizontalScrollIndicator={false}
+            onMomentumScrollEnd={(e) => {
+              const index = Math.round(e.nativeEvent.contentOffset.x / width);
+              setCurrentIndex(index);
+            }}
+            getItemLayout={(data, index) => ({
+              length: width,
+              offset: width * index,
+              index,
+            })}
+            keyExtractor={(_, index) => index.toString()}
+            renderItem={({ item }) => (
+              <Image source={item} style={styles.sliderImage} resizeMode="contain" />
+            )}
+          />
+
+          <TouchableOpacity onPress={goToNextSlide} style={styles.arrow}>
+            <Ionicons name="chevron-forward" size={24} color="#007bff" />
+          </TouchableOpacity>
+        </View>
+
+        {/* Banner Text */}
+        <View style={styles.bannerText}>
           <Text style={styles.bannerTitle}>عرض لفترة محدودة</Text>
           <Text style={styles.bannerSubtitle}>خصومات حتى 50%</Text>
           <TouchableOpacity style={styles.bannerButton}>
@@ -123,7 +178,7 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingHorizontal: 10 }}
         />
 
-        {/* Featured */}
+        {/* Featured Products */}
         <Text style={styles.sectionHeader}>منتجات مميزة</Text>
         <FlatList
           data={filteredProducts}
@@ -191,8 +246,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#007bff',
     height: 45,
     width: 45,
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -205,7 +258,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  banner: {
+  bannerSlider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  sliderImage: {
+    width: width,
+    height: 200,
+  },
+  arrow: {
+    paddingHorizontal: 5,
+  },
+  bannerText: {
     backgroundColor: '#eaf7ff',
     margin: 10,
     borderRadius: 12,
