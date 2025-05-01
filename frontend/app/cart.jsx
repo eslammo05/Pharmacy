@@ -7,7 +7,7 @@ import {
   StyleSheet,
 } from 'react-native';
 import { useNavigation } from '@react-navigation/native';
-import { Ionicons } from '@expo/vector-icons'; 
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Cart() {
   const navigation = useNavigation();
@@ -27,11 +27,11 @@ export default function Cart() {
 
   const decreaseQty = (id) => {
     setCartItems((prev) =>
-      prev.map((item) =>
-        item.id === id && item.quantity > 1
-          ? { ...item, quantity: item.quantity - 1 }
-          : item
-      )
+      prev
+        .map((item) =>
+          item.id === id ? { ...item, quantity: item.quantity - 1 } : item
+        )
+        .filter((item) => item.quantity > 0)
     );
   };
 
@@ -43,7 +43,6 @@ export default function Cart() {
   return (
     <ScrollView contentContainerStyle={styles.scroll}>
       <View style={styles.container}>
-        {}
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="arrow-back" size={24} color="#007BFF" />
         </TouchableOpacity>
@@ -97,7 +96,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f2f2f2',
   },
   container: {
-    flex:1,
+    flex: 1,
     backgroundColor: '#fff',
     padding: 20,
     width: '100%',
