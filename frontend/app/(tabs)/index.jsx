@@ -1,5 +1,4 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -8,8 +7,12 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+
+const { width } = Dimensions.get('window');
 
 const originalCategories = [
   { id: '1', title: 'Allopathy', icon: 'medkit' },
@@ -23,13 +26,23 @@ const originalFeatured = [
   { id: '2', name: 'Vitamin C', price: '35 EGP', description: 'Natural immune booster.' },
 ];
 
+// صور البانر اللي انت رفعتها
+const bannerImages = [
+  require('../(tabs)/image0.png'),
+  require('../(tabs)/image1.png'),
+  require('../(tabs)/image2.png'),
+  require('../(tabs)/image3.png'),
+];
+
 export default function HomeScreen() {
   const router = useRouter();
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredCategories, setFilteredCategories] = useState(originalCategories);
   const [filteredProducts, setFilteredProducts] = useState(originalFeatured);
   const [isSearching, setIsSearching] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const flatListRef = useRef();
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
@@ -52,60 +65,40 @@ export default function HomeScreen() {
     setIsSearching(false);
   };
 
-  const handleAuthPress = () => {
-    router.push('/profile');
-  };
-
   return (
     <View style={styles.container}>
-      {/* Header with Search */}
-      <View style={styles.searchHeader}>
-        <View style={styles.searchHeaderContent}>
-          <Text style={styles.searchHeaderTitle}>Welcome to our pharmacy</Text>
-          <View style={styles.headerIconsContainer}>
-            <TouchableOpacity 
-              style={styles.authButton}
-              onPress={handleAuthPress}
-            >
-              <Text style={styles.authButtonText}>
-                {isLoggedIn ? 'Profile' : 'Sign In/Register'}
-              </Text>
-            </TouchableOpacity>
-            
-            <TouchableOpacity 
-              style={styles.cartButton}
-              onPress={() => router.push('/cart')}
-            >
-              <Ionicons name="cart-outline" size={20} color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </View>
-        
-        <View style={styles.searchContainer}>
-          <TextInput
-            placeholder="Search products..."
-            placeholderTextColor="#999"
-            style={styles.searchInput}
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            onSubmitEditing={handleSearch}
-          />
-          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
-            <Ionicons name="search" size={20} color="black" />
-          </TouchableOpacity>
-          {isSearching && (
-            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
-              <Ionicons name="close" size={20} color="black" />
-            </TouchableOpacity>
-          )}
-        </View>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.headerTitle}>Welcome to our pharmacy</Text>
+        <TouchableOpacity onPress={() => router.push('/cart')}>
+          <Ionicons name="cart-outline" size={24} color="#fff" />
+        </TouchableOpacity>
       </View>
 
-      <ScrollView style={styles.content}>
+      {/* Search Input + Buttons */}
+      <View style={styles.searchContainer}>
+        <TextInput
+          placeholder="Search..."
+          placeholderTextColor="#ccc"
+          style={styles.searchInput}
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+        />
+        <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+          <Ionicons name="search" size={20} color="#fff" />
+        </TouchableOpacity>
+        {isSearching && (
+          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+            <Ionicons name="arrow-back" size={20} color="#fff" />
+          </TouchableOpacity>
+        )}
+      </View>
+
+      <ScrollView>
         {/* Banner */}
         <View style={styles.banner}>
-          <Text style={styles.bannerTitle}>Limited Time Offer</Text>
-          <Text style={styles.bannerSubtitle}>Discounts up to 50%</Text>
+          <Text style={styles.bannerTitle}>عرض لفترة محدودة</Text>
+          <Text style={styles.bannerSubtitle}>خصومات حتى 50%</Text>
           <TouchableOpacity style={styles.bannerButton}>
             <Text style={styles.bannerButtonText}>Shop Now</Text>
           </TouchableOpacity>
@@ -141,8 +134,8 @@ export default function HomeScreen() {
           contentContainerStyle={{ paddingHorizontal: 10 }}
         />
 
-        {/* Featured Products */}
-        <Text style={styles.sectionHeader}>Featured Products</Text>
+        {/* Featured */}
+        <Text style={styles.sectionHeader}>منتجات مميزة</Text>
         <FlatList
           data={filteredProducts}
           horizontal
@@ -243,7 +236,8 @@ const styles = StyleSheet.create({
     backgroundColor: 'white',
     height: 45,
     width: 45,
-    borderRadius: 25,
+    borderTopRightRadius: 0,
+    borderBottomRightRadius: 0,
     justifyContent: 'center',
     alignItems: 'center',
   },
@@ -257,7 +251,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  banner: {
+  bannerSlider: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 15,
+  },
+  sliderImage: {
+    width: width,
+    height: 200,
+  },
+  arrow: {
+    paddingHorizontal: 5,
+  },
+  bannerText: {
     backgroundColor: '#eaf7ff',
     margin: 15,
     borderRadius: 12,
