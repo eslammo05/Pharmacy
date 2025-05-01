@@ -1,239 +1,162 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  ScrollView,
-  StyleSheet,
-  FlatList,
-  TouchableOpacity,
-  TextInput,
-} from 'react-native';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { View, Text, FlatList, StyleSheet, TouchableOpacity, Image, TextInput } from 'react-native';
+import { useRouter } from 'expo-router';
+import { Ionicons } from '@expo/vector-icons';
 
-const categories = [
-  { id: '1', name: 'Allopathy' },
-  { id: '2', name: 'Anruvella' },
-  { id: '3', name: 'Hanno' },
-  { id: '4', name: 'Baby Care' },
-  { id: '5', name: 'Marital' },
-  { id: '6', name: 'Headcare' },
-  { id: '7', name: 'Eosinemes' },
+const originalCategories = [
+  { id: '1', name: 'Personal Care', image: 'https://via.placeholder.com/150/8fbc8f/ffffff?text=Care' },
+  { id: '2', name: 'Medicines', image: 'https://via.placeholder.com/150/4682b4/ffffff?text=Medicine' },
+  { id: '3', name: 'Baby Products', image: 'https://via.placeholder.com/150/ffa07a/ffffff?text=Baby' },
 ];
 
-const products = [
-  { id: '1', name: 'Product 1', categoryId: '1' },
-  { id: '2', name: 'Product 2', categoryId: '2' },
-  { id: '3', name: 'Product 3', categoryId: '1' },
-];
+export default function CategoriesScreen() {
+  const router = useRouter();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filteredCategories, setFilteredCategories] = useState(originalCategories);
+  const [isSearching, setIsSearching] = useState(false);
 
-function ProductItem({ item }) {
+  const handleSearch = () => {
+    const query = searchQuery.toLowerCase();
+    const matched = originalCategories.filter(cat =>
+      cat.name.toLowerCase().includes(query)
+    );
+    setFilteredCategories(matched);
+    setIsSearching(true);
+  };
+
+  const handleReset = () => {
+    setSearchQuery('');
+    setFilteredCategories(originalCategories);
+    setIsSearching(false);
+  };
+
   return (
-    <View style={styles.productItem}>
-      <Text style={styles.productText}>{item.name}</Text>
+    <View style={styles.container}>
+      {/* Search Header */}
+      <View style={styles.searchHeader}>
+        <View style={styles.headerContent}>
+          <Text style={styles.searchHeaderTitle}>Browse Categories</Text>
+          {/* Cart Icon */}
+          <TouchableOpacity style={styles.cartIcon} onPress={() => router.push('/cart')}>
+            <Ionicons name="cart-outline" size={20} color="white" />
+          </TouchableOpacity>
+        </View>
+        <View style={styles.searchContainer}>
+          <TextInput
+            placeholder="Search categories..."
+            placeholderTextColor="#999"
+            style={styles.searchInput}
+            value={searchQuery}
+            onChangeText={setSearchQuery}
+            onSubmitEditing={handleSearch}
+          />
+          <TouchableOpacity style={styles.searchButton} onPress={handleSearch}>
+            <Ionicons name="search" size={20} color="black" />
+          </TouchableOpacity>
+          {isSearching && (
+            <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
+              <Ionicons name="close" size={20} color="black" />
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+
+      <FlatList
+        data={filteredCategories}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={{ padding: 10 }}
+        renderItem={({ item }) => (
+          <TouchableOpacity
+            style={styles.card}
+            onPress={() =>
+              router.push({ pathname: '/category', params: { id: item.id, name: item.name } })
+            }
+          >
+            <Image source={{ uri: item.image }} style={styles.image} />
+            <Text style={styles.name}>{item.name}</Text>
+          </TouchableOpacity>
+        )}
+      />
     </View>
   );
 }
 
-export default function CategoriesScreen() {
-  const { id, title } = useLocalSearchParams();
-  const router = useRouter();
-
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredCategories, setFilteredCategories] = useState(categories);
-
-  const handleSearch = () => {
-    const results = categories.filter(c =>
-      c.name.toLowerCase().includes(searchQuery.toLowerCase())
-    );
-    setFilteredCategories(results);
-  };
-
-  const filteredProducts = id
-    ? products.filter(p => p.categoryId === id)
-    : products;
-
-  return (
-    <ScrollView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <Text style={styles.headerTitle}>Categories</Text>
-        <TouchableOpacity onPress={() => router.push('/cart')}>
-          <Text style={{ color: '#fff', fontSize: 20 }}>🛒</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Input + Button + Clear */}
-      <View style={styles.searchContainer}>
-        <TextInput
-          placeholder="Search categories..."
-          placeholderTextColor="#999"
-          style={styles.searchInput}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-
-        <TouchableOpacity onPress={handleSearch} style={styles.searchButton}>
-          <Text style={styles.searchButtonText}>🔍</Text>
-        </TouchableOpacity>
-
-        {searchQuery.length > 0 && (
-          <TouchableOpacity
-            onPress={() => {
-              setFilteredCategories(categories);
-              setSearchQuery('');
-            }}
-            style={styles.clearButton}
-          >
-            <Text style={styles.clearButtonText}>←</Text>
-          </TouchableOpacity>
-        )}
-      </View>
-
-      {/* Categories */}
-      <Text style={styles.sectionTitle}>Categories</Text>
-      {filteredCategories.length > 0 ? (
-        <FlatList
-          data={filteredCategories}
-          renderItem={({ item }) => (
-            <View style={styles.categoryCard}>
-              <Text style={styles.categoryCardText}>{item.name}</Text>
-            </View>
-          )}
-          keyExtractor={item => item.id}
-          numColumns={2}
-          columnWrapperStyle={styles.categoryRow}
-          scrollEnabled={false}
-        />
-      ) : (
-        <Text style={styles.notFoundText}>No categories found</Text>
-      )}
-
-      {/* Products */}
-      <Text style={styles.sectionTitle}>
-        Products {title ? `(${title})` : ''}
-      </Text>
-      {filteredProducts.length > 0 ? (
-        <FlatList
-          data={filteredProducts}
-          renderItem={({ item }) => <ProductItem item={item} />}
-          keyExtractor={item => item.id}
-          scrollEnabled={false}
-        />
-      ) : (
-        <Text style={styles.notFoundText}>No products found</Text>
-      )}
-    </ScrollView>
-  );
-}
-
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
+  container: { flex: 1, backgroundColor: '#fff' },
+
+  searchHeader: {
+    backgroundColor: '#007bff',
+    paddingTop: 50,
+    paddingBottom: 15,
+    paddingHorizontal: 15,
   },
-  header: {
+  headerContent: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007bff',
-    paddingHorizontal: 10,
-    paddingTop: 50,
-    paddingBottom: 10,
     justifyContent: 'space-between',
   },
-  headerTitle: {
+  searchHeaderTitle: {
+    fontSize: 20,
     color: '#fff',
-    fontSize: 22,
     fontWeight: 'bold',
   },
-  sectionTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    color: '#2A3F54',
-    marginVertical: 15,
-    borderBottomWidth: 2,
-    borderBottomColor: '#eee',
-    paddingBottom: 8,
-    marginHorizontal: 15,
+  cartIcon: {
+    backgroundColor: '#007bff',
+    padding: 10,
+    borderRadius: 25,
   },
   searchContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginHorizontal: 15,
-    marginTop: 15,
+    marginTop: 10,
   },
   searchInput: {
     flex: 1,
+    backgroundColor: '#fff',
+    borderRadius: 25,
+    paddingHorizontal: 20,
     height: 45,
-    backgroundColor: '#f1f1f1',
-    borderTopLeftRadius: 10,
-    borderBottomLeftRadius: 10,
-    paddingHorizontal: 15,
     fontSize: 16,
-    color: '#333',
-  },
-  searchButton: {
-    height: 45,
-    paddingHorizontal: 15,
-    backgroundColor: '#007bff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopRightRadius: 0,
-    borderBottomRightRadius: 0,
-  },
-  searchButtonText: {
-    color: '#fff',
-    fontSize: 18,
-  },
-  clearButton: {
-    height: 45,
-    paddingHorizontal: 15,
-    backgroundColor: '#007bff',
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderTopRightRadius: 10,
-    borderBottomRightRadius: 10,
-  },
-  clearButtonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: 'bold',
-  },
-  categoryRow: {
-    justifyContent: 'space-between',
-    marginHorizontal: 15,
-    marginBottom: 12,
-  },
-  categoryCard: {
-    flex: 1,
-    backgroundColor: '#f0f8ff',
-    borderRadius: 12,
-    paddingVertical: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginHorizontal: 5,
+    color: '#000',
     elevation: 2,
   },
-  categoryCardText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#2A3F54',
+  searchButton: {
+    position: 'absolute',
+    right: 15,
+    backgroundColor: 'white',
+    height: 45,
+    width: 45,
+    borderRadius: 25,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  productItem: {
-    padding: 16,
-    backgroundColor: '#E8F5E9',
-    marginBottom: 8,
-    marginHorizontal: 15,
+  resetButton: {
+    position: 'absolute',
+    right: 65,
+    backgroundColor: '#ccc',
+    height: 25,
+    width: 25,
+    borderRadius: 15,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+
+  card: {
+    backgroundColor: '#f8f9fa',
+    borderRadius: 10,
+    marginBottom: 15,
+    padding: 10,
+    alignItems: 'center',
+  },
+  image: {
+    width: '100%',
+    height: 120,
     borderRadius: 8,
+    marginBottom: 10,
   },
-  productText: {
+  name: {
     fontSize: 16,
-    color: '#2A3F54',
-    fontWeight: '500',
-  },
-  notFoundText: {
-    textAlign: 'center',
-    color: '#999',
-    fontSize: 16,
-    marginTop: 20,
+    fontWeight: 'bold',
+    color: '#007bff',
   },
 });
