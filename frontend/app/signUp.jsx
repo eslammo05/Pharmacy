@@ -21,110 +21,22 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  const handleSignUp = async () => {
-    if (!fullName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'Please fill in all fields');
-      return;
-    }
-
-    if (password !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
-      return;
-    }
-
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-      const user = userCredential.user;
-
-      await setDoc(doc(db, 'users', user.uid), {
-        fullName,
-        email,
-        uid: user.uid
-      });
-
-      Alert.alert('Success', 'Account created successfully!', [
-        {
-          text: 'OK',
-          onPress: () => router.push('./signIn.jsx'),
-        },
-      ]);
-    } catch (error) {
-      Alert.alert('Registration Error', error.message);
-    }
+  const handleSignUp = () => {
+    router.push({ pathname: '/profile', params: { email, name } });
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.scrollContainer}>
-      <View style={styles.contentContainer}>
-        <Image
-          source={require('../assets/images/logo-removebg-preview.png')}
-          style={styles.logo}
-          resizeMode="contain"
-        />
+    <View style={styles.container}>
+      <Text style={styles.title}>Create Account</Text>
 
-        <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
+      <TextInput placeholder="Name" style={styles.input} value={name} onChangeText={setName} />
+      <TextInput placeholder="Email" style={styles.input} value={email} onChangeText={setEmail} />
+      <TextInput placeholder="Password" secureTextEntry style={styles.input} />
 
-        <TextInput
-          placeholder="Full Name"
-          style={styles.input}
-          placeholderTextColor="#999"
-          value={fullName}
-          onChangeText={setFullName}
-        />
-        <TextInput
-          placeholder="Email"
-          style={styles.input}
-          placeholderTextColor="#999"
-          value={email}
-          onChangeText={setEmail}
-          keyboardType="email-address"
-          autoCapitalize="none"
-        />
-        <TextInput
-          placeholder="Password"
-          style={styles.input}
-          placeholderTextColor="#999"
-          value={password}
-          onChangeText={setPassword}
-          secureTextEntry
-        />
-        <TextInput
-          placeholder="Confirm Password"
-          style={styles.input}
-          placeholderTextColor="#999"
-          value={confirmPassword}
-          onChangeText={setConfirmPassword}
-          secureTextEntry
-        />
-
-        <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
-          <Text style={styles.signupButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.orText}>──────── OR ────────</Text>
-
-        <TouchableOpacity
-          style={styles.googleButton}
-          onPress={() => Alert.alert('Coming Soon', 'Google sign up not implemented yet.')}
-        >
-          <Image
-            source={{
-              uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
-            }}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleText}>Sign up with Google</Text>
-        </TouchableOpacity>
-
-        <View style={styles.signinContainer}>
-          <Text style={styles.signinText}>Already have an account?</Text>
-          <TouchableOpacity onPress={() => router.push('/signIn')}>
-            <Text style={styles.signinLink}> Sign In</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
-    </ScrollView>
+      <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+        <Text style={styles.buttonText}>Sign Up</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
 
