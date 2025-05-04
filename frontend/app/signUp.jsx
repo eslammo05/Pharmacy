@@ -1,25 +1,11 @@
 import React, { useState } from 'react';
-import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Image,
-  StyleSheet,
-  ScrollView,
-  Alert,
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { useRouter } from 'expo-router';
-import { auth, db } from '../firebase/config';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc } from 'firebase/firestore';
 
-export default function SignUpScreen() {
-  const router = useRouter();
-  const [fullName, setFullName] = useState('');
+export default function SignUp() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [name, setName] = useState('');
+  const router = useRouter();
 
   const handleSignUp = () => {
     router.push({ pathname: '/profile', params: { email, name } });
@@ -41,90 +27,9 @@ export default function SignUpScreen() {
 }
 
 const styles = StyleSheet.create({
-  scrollContainer: {
-    flexGrow: 1,
-    width: '100%',
-  },
-  contentContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 20,
-    maxWidth: 400,
-    width: '100%',
-    marginHorizontal: 'auto',
-  },
-  logo: {
-    width: 120,
-    height: 120,
-    marginBottom: 20,
-  },
-  title: {
-    fontSize: 24,
-    fontWeight: '700',
-    color: '#1E1E1E',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 30,
-  },
-  input: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    paddingHorizontal: 15,
-    fontSize: 16,
-    color: '#333',
-    marginBottom: 15,
-  },
-  signupButton: {
-    width: '100%',
-    height: 50,
-    backgroundColor: '#007BFF',
-    borderRadius: 10,
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 20,
-  },
-  signupButtonText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: '600',
-  },
-  orText: {
-    color: '#999',
-    marginVertical: 10,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    width: '100%',
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  googleText: {
-    fontSize: 16,
-    color: '#333',
-  },
-  signinContainer: {
-    flexDirection: 'row',
-    marginTop: 25,
-  },
-  signinText: {
-    color: '#666',
-  },
-  signinLink: {
-    color: '#007BFF',
-    fontWeight: '600',
-  },
+  container: { padding: 30, flex: 1, justifyContent: 'center' },
+  title: { fontSize: 28, fontWeight: 'bold', textAlign: 'center', marginBottom: 20 },
+  input: { borderWidth: 1, borderColor: '#ccc', padding: 10, borderRadius: 8, marginBottom: 10 },
+  button: { backgroundColor: '#4CAF50', padding: 15, borderRadius: 8 },
+  buttonText: { color: '#fff', fontWeight: 'bold', textAlign: 'center' },
 });

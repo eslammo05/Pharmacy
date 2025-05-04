@@ -1,72 +1,51 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 
 export default function ProfileScreen() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); 
-  const router = useRouter(); 
+  const router = useRouter();
+  const { email } = useLocalSearchParams();
 
   const menuItems = [
-    { title: 'My Orders', icon: 'list' },
-    { title: 'My Medicine', icon: 'medkit' },
-    { title: 'My Details', icon: 'person' },
-    { title: 'Address', icon: 'map' },
+    { title: 'Edit Profile', icon: 'person' },
+    { title: 'Orders', icon: 'clipboard' },
+    { title: 'Addresses', icon: 'location' },
     { title: 'Payment Methods', icon: 'card' },
-    { title: 'Notifications', icon: 'notifications' },
-    { title: 'Help', icon: 'help-circle' },
   ];
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileHeader}>
-        <View style={styles.avatarContainer}>
-          <Ionicons name="person" size={60} color="#666" />
-        </View>
-
-        {isLoggedIn ? (
-          <>
-            <Text style={styles.name}>User</Text>
-            <Text style={styles.email}>User1234@gmail.com</Text>
-          </>
-        ) : (
-          <>
-            <Text style={styles.welcome}>Welcome to Pharmacy App</Text>
-            <View style={styles.authButtons}>
-              <TouchableOpacity
-                style={styles.authButton}
-                onPress={() => router.push('/signIn')}
-              >
-                <Text style={styles.authButtonText}>Sign In</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.authButton, styles.signUpButton]}
-                onPress={() => router.push('/signUp')}
-              >
-                <Text style={styles.authButtonText}>Sign Up</Text>
-              </TouchableOpacity>
-            </View>
-          </>
-        )}
+        <Image
+           source={require('../(tabs)/doctor.png')}
+          style={styles.avatar}
+        />
+        <Text style={styles.name}>Email</Text>
+        <Text style={styles.email}>{email}</Text>
       </View>
 
-      {isLoggedIn && (
-        <View style={styles.menuContainer}>
-          {menuItems.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.menuItem}
-              onPress={() => console.log(item.title)}
-            >
-              <View style={styles.menuIcon}>
-                <Ionicons name={item.icon} size={24} color="#666" />
-              </View>
-              <Text style={styles.menuText}>{item.title}</Text>
-              <Ionicons name="chevron-forward" size={20} color="#999" />
-            </TouchableOpacity>
-          ))}
-        </View>
-      )}
+      <View style={styles.menuContainer}>
+        {menuItems.map((item, index) => (
+          <TouchableOpacity key={index} style={styles.menuItem}>
+            <View style={styles.menuIcon}>
+              <Ionicons name={item.icon} size={24} color="#2A3F54" />
+            </View>
+            <Text style={styles.menuText}>{item.title}</Text>
+            <Ionicons name="chevron-forward" size={20} color="#999" />
+          </TouchableOpacity>
+        ))}
+
+        <TouchableOpacity
+          style={[styles.menuItem, { marginTop: 20 }]}
+          onPress={() => router.replace('/signIn')}
+        >
+          <View style={styles.menuIcon}>
+            <Ionicons name="power" size={24} color="#D9534F" />
+          </View>
+          <Text style={[styles.menuText, { color: '#D9534F' }]}>Log Out</Text>
+        </TouchableOpacity>
+      </View>
     </ScrollView>
   );
 }
@@ -82,11 +61,11 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: '#eee',
   },
-  avatarContainer: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 60,
-    padding: 15,
-    marginBottom: 15,
+  avatar: {
+    width: 80,
+    height: 80,
+    borderRadius: 40,
+    marginBottom: 10,
   },
   name: {
     fontSize: 22,
@@ -96,29 +75,6 @@ const styles = StyleSheet.create({
   email: {
     fontSize: 16,
     color: '#666',
-  },
-  welcome: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 10,
-  },
-  authButtons: {
-    flexDirection: 'row',
-    marginTop: 10,
-  },
-  authButton: {
-    backgroundColor: '#2A3F54',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    borderRadius: 8,
-    marginHorizontal: 5,
-  },
-  signUpButton: {
-    backgroundColor: '#4CAF50',
-  },
-  authButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
   },
   menuContainer: {
     paddingHorizontal: 15,
@@ -134,6 +90,7 @@ const styles = StyleSheet.create({
   menuIcon: {
     width: 30,
     marginRight: 15,
+    alignItems: 'center',
   },
   menuText: {
     flex: 1,

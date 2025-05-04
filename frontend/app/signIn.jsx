@@ -8,9 +8,12 @@ import {
   StyleSheet,
   ScrollView,
 } from 'react-native';
+
 import { useRouter } from 'expo-router';
 
-export default function SignInScreen() {
+export default function SignIn() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const router = useRouter();
 
   return (
@@ -71,6 +74,7 @@ export default function SignInScreen() {
         </View>
       </View>
     </ScrollView>
+
   );
 }
 
@@ -168,4 +172,5 @@ const styles = StyleSheet.create({
     color: '#007BFF',
     fontWeight: '600',
   },
+
 });
