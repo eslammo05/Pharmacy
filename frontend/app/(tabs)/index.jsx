@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useRouter } from 'expo-router';
+import React, { useState } from "react";
+import { useRouter } from "expo-router";
 import {
   View,
   Text,
@@ -8,34 +8,46 @@ import {
   ScrollView,
   FlatList,
   TouchableOpacity,
-} from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
-
+  Image,
+} from "react-native";
+import { Ionicons } from "@expo/vector-icons";
+import logo from "../../assets/images/logo pharmacy white.png";
 const originalCategories = [
-  { id: '1', title: 'Allopathy', icon: 'medkit' },
-  { id: '2', title: 'Ayurveda', icon: 'leaf' },
-  { id: '3', title: 'Baby Care', icon: 'baby' },
-  { id: '0', title: 'All Categories', isAll: true },
+  { id: "1", title: "Allopathy", icon: "medkit" },
+  { id: "2", title: "Ayurveda", icon: "leaf" },
+  { id: "3", title: "Baby Care", icon: "baby" },
+  { id: "0", title: "All Categories", isAll: true },
 ];
 
 const originalFeatured = [
-  { id: '1', name: 'Panadol', price: '20 EGP', description: 'Pain relief medication.' },
-  { id: '2', name: 'Vitamin C', price: '35 EGP', description: 'Natural immune booster.' },
+  {
+    id: "1",
+    name: "Panadol",
+    price: "20 EGP",
+    description: "Pain relief medication.",
+  },
+  {
+    id: "2",
+    name: "Vitamin C",
+    price: "35 EGP",
+    description: "Natural immune booster.",
+  },
 ];
 
 export default function HomeScreen() {
   const router = useRouter();
-  const [searchQuery, setSearchQuery] = useState('');
-  const [filteredCategories, setFilteredCategories] = useState(originalCategories);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [filteredCategories, setFilteredCategories] =
+    useState(originalCategories);
   const [filteredProducts, setFilteredProducts] = useState(originalFeatured);
   const [isSearching, setIsSearching] = useState(false);
 
   const handleSearch = () => {
     const query = searchQuery.toLowerCase();
-    const matchedCategories = originalCategories.filter(cat =>
+    const matchedCategories = originalCategories.filter((cat) =>
       cat.title.toLowerCase().includes(query)
     );
-    const matchedProducts = originalFeatured.filter(prod =>
+    const matchedProducts = originalFeatured.filter((prod) =>
       prod.name.toLowerCase().includes(query)
     );
 
@@ -47,25 +59,25 @@ export default function HomeScreen() {
   const handleReset = () => {
     setFilteredCategories(originalCategories);
     setFilteredProducts(originalFeatured);
-    setSearchQuery('');
+    setSearchQuery("");
     setIsSearching(false);
   };
 
   return (
     <View style={styles.container}>
-      {/* Header with Welcome Message and Auth Button */}
+      {/* Header with Logo, Sign In and Cart Button */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Welcome to our pharmacy</Text>
+        <Image source={logo} style={styles.logo} resizeMode="contain" />
         <View style={styles.headerButtons}>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.authButton}
-            onPress={() => router.push('/profile')}
+            onPress={() => router.push("/profile")}
           >
             <Text style={styles.authButtonText}>Sign In/Register</Text>
           </TouchableOpacity>
-          <TouchableOpacity 
+          <TouchableOpacity
             style={styles.cartButton}
-            onPress={() => router.push('/cart')}
+            onPress={() => router.push("/cart")}
           >
             <Ionicons name="cart-outline" size={20} color="#fff" />
           </TouchableOpacity>
@@ -113,14 +125,14 @@ export default function HomeScreen() {
               style={styles.categoryItem}
               onPress={() =>
                 router.push({
-                  pathname: '/Categories',
+                  pathname: "/Categories",
                   params: item.isAll ? {} : { id: item.id, title: item.title },
                 })
               }
             >
               <View style={styles.categoryIcon}>
                 {item.isAll ? (
-                  <Text style={{ fontSize: 24, color: '#fff' }}>☰</Text>
+                  <Text style={{ fontSize: 24, color: "#fff" }}>☰</Text>
                 ) : (
                   <Ionicons name={item.icon} size={24} color="#007bff" />
                 )}
@@ -143,7 +155,7 @@ export default function HomeScreen() {
               style={styles.featuredItem}
               onPress={() =>
                 router.push({
-                  pathname: '/product',
+                  pathname: "/product",
                   params: {
                     name: item.name,
                     price: item.price,
@@ -166,160 +178,161 @@ export default function HomeScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { 
-    flex: 1, 
-    backgroundColor: '#fff' 
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
   },
   header: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: 15,
-    paddingTop: 50,
-    backgroundColor: '#007bff',
+  justifyContent: 'space-between',
+  alignItems: 'center',
+  backgroundColor: '#007bff',
+  paddingTop: 30,
+  paddingHorizontal: 15,
+  paddingBottom: 10,
   },
-  headerTitle: {
-    fontSize: 20,
-    color: '#fff',
-    fontWeight: 'bold',
+  logo: {
+    width: 150,
+  height: 50,
+  resizeMode: 'contain',
   },
   headerButtons: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
     gap: 10,
   },
   authButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     paddingVertical: 6,
     paddingHorizontal: 12,
     borderRadius: 20,
   },
   authButtonText: {
-    color: '#fff',
+    color: "#fff",
     fontSize: 14,
-    fontWeight: '500',
+    fontWeight: "500",
   },
   cartButton: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    backgroundColor: "rgba(255, 255, 255, 0.2)",
     width: 36,
     height: 36,
     borderRadius: 18,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   searchContainer: {
-    flexDirection: 'row',
+    flexDirection: "row",
     margin: 15,
-    alignItems: 'center',
-    position: 'relative',
+    alignItems: "center",
+    position: "relative",
   },
   searchInput: {
     flex: 1,
-    backgroundColor: '#f1f1f1',
+    backgroundColor: "#f1f1f1",
     borderRadius: 25,
     paddingHorizontal: 20,
     height: 45,
     fontSize: 16,
-    color: '#000',
+    color: "#000",
   },
   searchButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 15,
     height: 45,
     width: 45,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   resetButton: {
-    position: 'absolute',
+    position: "absolute",
     right: 65,
     height: 25,
     width: 25,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
   },
   content: {
     marginBottom: 10,
   },
   banner: {
-    backgroundColor: '#eaf7ff',
+    backgroundColor: "#eaf7ff",
     margin: 15,
     borderRadius: 12,
     padding: 20,
   },
   bannerTitle: {
-    color: '#007bff',
+    color: "#007bff",
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: "bold",
   },
   bannerSubtitle: {
-    color: '#333',
+    color: "#333",
     marginTop: 5,
     fontSize: 16,
   },
   bannerButton: {
     marginTop: 10,
-    backgroundColor: '#007bff',
+    backgroundColor: "#007bff",
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 10,
-    alignSelf: 'flex-start',
+    alignSelf: "flex-start",
   },
   bannerButtonText: {
-    color: '#fff',
-    fontWeight: 'bold',
+    color: "#fff",
+    fontWeight: "bold",
   },
   sectionHeader: {
     fontSize: 18,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    color: "#333",
     marginHorizontal: 15,
     marginTop: 20,
     marginBottom: 10,
   },
   categoryItem: {
-    alignItems: 'center',
+    alignItems: "center",
     marginRight: 15,
     marginTop: 10,
   },
   categoryIcon: {
     width: 60,
     height: 60,
-    backgroundColor: '#e6f3ff',
+    backgroundColor: "#e6f3ff",
     borderRadius: 30,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     marginBottom: 5,
   },
   categoryText: {
     fontSize: 12,
-    color: '#333',
-    fontWeight: '500',
-    textAlign: 'center',
+    color: "#333",
+    fontWeight: "500",
+    textAlign: "center",
   },
   featuredItem: {
     width: 120,
     marginRight: 15,
     marginTop: 10,
-    backgroundColor: '#f8f9fa',
+    backgroundColor: "#f8f9fa",
     borderRadius: 10,
     padding: 10,
   },
   featuredImagePlaceholder: {
-    width: '100%',
+    width: "100%",
     height: 100,
-    backgroundColor: '#cce6ff',
+    backgroundColor: "#cce6ff",
     borderRadius: 8,
     marginBottom: 10,
   },
   featuredName: {
     fontSize: 14,
-    fontWeight: 'bold',
-    color: '#007bff',
+    fontWeight: "bold",
+    color: "#007bff",
   },
   featuredPrice: {
     fontSize: 12,
-    color: '#333',
+    color: "#333",
     marginTop: 5,
   },
 });
