@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useRouter } from "expo-router";
+import Swiper from 'react-native-swiper';
 import {
   View,
   Text,
@@ -9,9 +10,11 @@ import {
   FlatList,
   TouchableOpacity,
   Image,
+  Dimensions,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import logo from "../../assets/images/logo pharmacy white.png";
+
 const originalCategories = [
   { id: "1", title: "Allopathy", icon: "medkit" },
   { id: "2", title: "Ayurveda", icon: "leaf" },
@@ -19,26 +22,17 @@ const originalCategories = [
   { id: "0", title: "All Categories", isAll: true },
 ];
 
+const { width } = Dimensions.get('window');
+
 const originalFeatured = [
-  {
-    id: "1",
-    name: "Panadol",
-    price: "20 EGP",
-    description: "Pain relief medication.",
-  },
-  {
-    id: "2",
-    name: "Vitamin C",
-    price: "35 EGP",
-    description: "Natural immune booster.",
-  },
+  { id: "1", name: "Panadol", price: "20 EGP", description: "Pain relief medication." },
+  { id: "2", name: "Vitamin C", price: "35 EGP", description: "Natural immune booster." },
 ];
 
 export default function HomeScreen() {
   const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredCategories, setFilteredCategories] =
-    useState(originalCategories);
+  const [filteredCategories, setFilteredCategories] = useState(originalCategories);
   const [filteredProducts, setFilteredProducts] = useState(originalFeatured);
   const [isSearching, setIsSearching] = useState(false);
 
@@ -50,7 +44,6 @@ export default function HomeScreen() {
     const matchedProducts = originalFeatured.filter((prod) =>
       prod.name.toLowerCase().includes(query)
     );
-
     setFilteredCategories(matchedCategories);
     setFilteredProducts(matchedProducts);
     setIsSearching(true);
@@ -65,7 +58,7 @@ export default function HomeScreen() {
 
   return (
     <View style={styles.container}>
-      {/* Header with Logo, Sign In and Cart Button */}
+      {/* Header */}
       <View style={styles.header}>
         <Image source={logo} style={styles.logo} resizeMode="contain" />
         <View style={styles.headerButtons}>
@@ -105,13 +98,24 @@ export default function HomeScreen() {
       </View>
 
       <ScrollView style={styles.content}>
-        {/* Banner */}
-        <View style={styles.banner}>
-          <Text style={styles.bannerTitle}>Limited Time Offer</Text>
-          <Text style={styles.bannerSubtitle}>Discounts up to 50%</Text>
-          <TouchableOpacity style={styles.bannerButton}>
-            <Text style={styles.bannerButtonText}>Shop Now</Text>
-          </TouchableOpacity>
+        {/* Offers Slider */}
+        <Text style={styles.sliderTitle}> Best Offers</Text>
+        <View style={styles.bannerContainer}>
+          <Swiper
+            autoplay
+            autoplayTimeout={5}
+            showsButtons
+            dotColor="#ccc"
+            activeDotColor="#007bff"
+            style={styles.swiper}
+            loop
+          >
+            <Image source={require('../../assets/images/first img.png')} style={styles.bannerImage} />
+            <Image source={require('../../assets/images/sec img.png')} style={styles.bannerImage} />
+            <Image source={require('../../assets/images/third img.png')} style={styles.bannerImage} />
+            <Image source={require('../../assets/images/forth img.png')} style={styles.bannerImage} />
+            <Image source={require('../../assets/images/fifth img.png')} style={styles.bannerImage} />
+          </Swiper>
         </View>
 
         {/* Categories */}
@@ -183,10 +187,10 @@ const styles = StyleSheet.create({
     backgroundColor: "#fff",
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    backgroundColor: '#007bff',
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#007bff",
     paddingTop: 10,
     paddingHorizontal: 15,
     paddingBottom: 10,
@@ -194,8 +198,8 @@ const styles = StyleSheet.create({
   },
   logo: {
     width: 100,
-  height: 150,
-  resizeMode: 'contain',
+    height: 150,
+    resizeMode: "contain",
   },
   headerButtons: {
     flexDirection: "row",
@@ -255,33 +259,24 @@ const styles = StyleSheet.create({
   content: {
     marginBottom: 10,
   },
-  banner: {
-    backgroundColor: "#eaf7ff",
-    margin: 15,
-    borderRadius: 12,
-    padding: 20,
-  },
-  bannerTitle: {
-    color: "#007bff",
+  sliderTitle: {
     fontSize: 20,
     fontWeight: "bold",
-  },
-  bannerSubtitle: {
-    color: "#333",
-    marginTop: 5,
-    fontSize: 16,
-  },
-  bannerButton: {
+    color: "#007bff",
+    marginHorizontal: 15,
     marginTop: 10,
-    backgroundColor: "#007bff",
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 10,
-    alignSelf: "flex-start",
+    marginBottom: 5,
   },
-  bannerButtonText: {
-    color: "#fff",
-    fontWeight: "bold",
+  bannerContainer: {
+    width: width,
+    height: 500,
+    alignSelf: "center",
+    marginBottom: 10,
+  },
+  bannerImage: {
+    width: width,
+    height: 500 ,
+    resizeMode: "cover",
   },
   sectionHeader: {
     fontSize: 18,
