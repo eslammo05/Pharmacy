@@ -1,11 +1,55 @@
-import React from 'react';
-import { View, Text, ScrollView, StyleSheet, TouchableOpacity, Image } from 'react-native';
+// profile.jsx
+
+import React, { useEffect, useState } from 'react';
+import {
+  View, Text, ScrollView, StyleSheet, TouchableOpacity, Image, Alert,
+} from 'react-native';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import { db } from '../../firebase/config';
+import { doc, getDoc } from 'firebase/firestore';
 
 export default function ProfileScreen() {
   const router = useRouter();
-  const { email } = useLocalSearchParams();
+  const { email, uid } = useLocalSearchParams();
+  const [profileImage, setProfileImage] = useState(require('../(tabs)/doctor.png'));
+  const [userRole, setUserRole] = useState(null);
+
+  const fetchUserRole = async () => {
+    try {
+      const docRef = doc(db, 'users', uid);
+      const docSnap = await getDoc(docRef);
+      if (docSnap.exists()) {
+        setUserRole(docSnap.data().role);
+      }
+    } catch (err) {
+      console.error('Error fetching user role:', err);
+    }
+  };
+
+  useEffect(() => {
+    fetchUserRole();
+  }, []);
+
+  const pickImage = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert('Permission denied', 'Camera roll permission required');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+
+    if (!result.canceled) {
+      setProfileImage({ uri: result.assets[0].uri });
+    }
+  };
 
   const menuItems = [
     { title: 'Edit Profile', icon: 'person' },
@@ -14,20 +58,26 @@ export default function ProfileScreen() {
     { title: 'Payment Methods', icon: 'card' },
   ];
 
+  const adminItems = [
+    { title: 'Add Category Item', icon: 'add-circle', onPress: () => router.push('/admin/addItem') },
+    { title: 'Delete Category Item', icon: 'trash', onPress: () => router.push('/admin/deleteItem') },
+  ];
+
   return (
     <ScrollView style={styles.container}>
       <View style={styles.profileHeader}>
-        <Image
-           source={require('../(tabs)/doctor.png')}
-          style={styles.avatar}
-        />
+        <Image source={profileImage} style={styles.avatar} />
+        <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+          <Text style={styles.uploadButtonText}>Upload Photo</Text>
+        </TouchableOpacity>
         <Text style={styles.name}>Email</Text>
         <Text style={styles.email}>{email}</Text>
+        <Text style={styles.email}>Role: {userRole}</Text>
       </View>
 
       <View style={styles.menuContainer}>
-        {menuItems.map((item, index) => (
-          <TouchableOpacity key={index} style={styles.menuItem}>
+        {(userRole === 'admin' ? [...adminItems, ...menuItems] : menuItems).map((item, index) => (
+          <TouchableOpacity key={index} style={styles.menuItem} onPress={item.onPress}>
             <View style={styles.menuIcon}>
               <Ionicons name={item.icon} size={24} color="#2A3F54" />
             </View>
@@ -40,9 +90,7 @@ export default function ProfileScreen() {
           style={[styles.menuItem, { marginTop: 20 }]}
           onPress={() => router.replace('/signIn')}
         >
-          <View style={styles.menuIcon}>
-            <Ionicons name="power" size={24} color="#D9534F" />
-          </View>
+          <Ionicons name="power" size={24} color="#D9534F" style={styles.menuIcon} />
           <Text style={[styles.menuText, { color: '#D9534F' }]}>Log Out</Text>
         </TouchableOpacity>
       </View>
@@ -51,50 +99,22 @@ export default function ProfileScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
+  container: { flex: 1, backgroundColor: '#fff' },
   profileHeader: {
-    alignItems: 'center',
-    padding: 30,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    alignItems: 'center', padding: 30, borderBottomWidth: 1, borderBottomColor: '#eee',
   },
-  avatar: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    marginBottom: 10,
+  avatar: { width: 120, height: 120, borderRadius: 60, marginBottom: 15 },
+  uploadButton: {
+    backgroundColor: '#2A3F54', paddingVertical: 8, paddingHorizontal: 15, borderRadius: 20,
   },
-  name: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 5,
-  },
-  email: {
-    fontSize: 16,
-    color: '#666',
-  },
-  menuContainer: {
-    paddingHorizontal: 15,
-    marginTop: 10,
-  },
+  uploadButtonText: { color: '#fff', fontSize: 14 },
+  name: { fontSize: 22, fontWeight: 'bold', marginBottom: 5 },
+  email: { fontSize: 16, color: '#666' },
+  menuContainer: { paddingHorizontal: 15, marginTop: 10 },
   menuItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 15,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    flexDirection: 'row', alignItems: 'center', paddingVertical: 15,
+    borderBottomWidth: 1, borderBottomColor: '#eee',
   },
-  menuIcon: {
-    width: 30,
-    marginRight: 15,
-    alignItems: 'center',
-  },
-  menuText: {
-    flex: 1,
-    fontSize: 16,
-    color: '#333',
-  },
+  menuIcon: { width: 30, marginRight: 15, alignItems: 'center' },
+  menuText: { flex: 1, fontSize: 16, color: '#333' },
 });

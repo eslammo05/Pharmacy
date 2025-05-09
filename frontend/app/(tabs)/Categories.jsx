@@ -4,9 +4,9 @@ import { useRouter } from 'expo-router';
 import { Ionicons } from '@expo/vector-icons';
 
 const originalCategories = [
-  { id: '1', name: 'Personal Care', image: 'https://via.placeholder.com/150/8fbc8f/ffffff?text=Care' },
-  { id: '2', name: 'Medicines', image: 'https://via.placeholder.com/150/4682b4/ffffff?text=Medicine' },
-  { id: '3', name: 'Baby Products', image: 'https://via.placeholder.com/150/ffa07a/ffffff?text=Baby' },
+  { id: '1', name: 'Personal Care', image: 'https://th.bing.com/th/id/R.0fda11592cd4c12c885f7c55a5779c25?rik=Zjm3OT048OdSXg&pid=ImgRaw&r=0' },
+  { id: '2', name: 'Medicines', image: 'https://th.bing.com/th/id/OIP.W8eq-94DHrtwmBkQ4DcYzwHaEg?cb=iwc1&rs=1&pid=ImgDetMain' },
+  { id: '3', name: 'Baby Products', image: 'https://th.bing.com/th/id/OIP.d5xhVv6bKVwcqZABygwNwAHaHa?w=187&h=187&c=7&r=0&o=5&cb=iwc1&dpr=1.3&pid=1.7' },
 ];
 
 export default function CategoriesScreen() {

@@ -9,6 +9,7 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import { useRouter } from 'expo-router';
 import { auth, db } from '../firebase/config';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
@@ -20,10 +21,9 @@ export default function SignUpScreen() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [role, setRole] = useState('user');
 
   const handleSignUp = async () => {
-    console.log('Signup function triggered');
-
     if (!fullName || !email || !password || !confirmPassword) {
       Alert.alert('Error', 'Please fill all fields');
       return;
@@ -42,19 +42,18 @@ export default function SignUpScreen() {
         fullName,
         email,
         uid: user.uid,
+        role,
       });
 
       Alert.alert('Success', 'Account created successfully!', [
         {
           text: 'OK',
           onPress: () => {
-            console.log('Navigating to signIn...');
             router.replace('/signIn');
           },
         },
       ]);
     } catch (error) {
-      console.log('Signup Error:', error.message);
       Alert.alert('Error', error.message);
     }
   };
@@ -69,7 +68,6 @@ export default function SignUpScreen() {
         />
 
         <Text style={styles.title}>Create Account</Text>
-        <Text style={styles.subtitle}>Sign up to get started</Text>
 
         <TextInput
           placeholder="Full Name"
@@ -104,23 +102,20 @@ export default function SignUpScreen() {
           secureTextEntry
         />
 
+        <Text style={styles.label}>Sign up as:</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={role}
+            onValueChange={(itemValue) => setRole(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="User" value="user" />
+            <Picker.Item label="Admin" value="admin" />
+          </Picker>
+        </View>
+
         <TouchableOpacity style={styles.signupButton} onPress={handleSignUp}>
           <Text style={styles.signupButtonText}>Sign Up</Text>
-        </TouchableOpacity>
-
-        <Text style={styles.orText}>──────── OR ────────</Text>
-
-        <TouchableOpacity
-          style={styles.googleButton}
-          onPress={() => alert('Google Sign Up')}
-        >
-          <Image
-            source={{
-              uri: 'https://img.icons8.com/color/48/000000/google-logo.png',
-            }}
-            style={styles.googleIcon}
-          />
-          <Text style={styles.googleText}>Sign up with Google</Text>
         </TouchableOpacity>
 
         <View style={styles.signinContainer}>
@@ -137,16 +132,23 @@ export default function SignUpScreen() {
 const styles = StyleSheet.create({
   scrollContainer: {
     flexGrow: 1,
-    width: '100%',
-  },
-  contentContainer: {
-    flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
+    paddingVertical: 40,
+    backgroundColor: '#f5f5f5',
+  },
+  contentContainer: {
+    width: '90%',
     maxWidth: 400,
-    width: '100%',
-    marginHorizontal: 'auto',
+    backgroundColor: '#fff',
+    padding: 20,
+    borderRadius: 12,
+    alignItems: 'center',
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 8,
   },
   logo: {
     width: 120,
@@ -157,12 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: '700',
     color: '#1E1E1E',
-    marginBottom: 5,
-  },
-  subtitle: {
-    fontSize: 14,
-    color: '#666',
-    marginBottom: 30,
+    marginBottom: 20,
   },
   input: {
     width: '100%',
@@ -174,6 +171,23 @@ const styles = StyleSheet.create({
     color: '#333',
     marginBottom: 15,
   },
+  label: {
+    alignSelf: 'flex-start',
+    fontSize: 16,
+    color: '#333',
+    marginBottom: 5,
+    marginTop: 10,
+  },
+  pickerContainer: {
+    width: '100%',
+    backgroundColor: '#F5F5F5',
+    borderRadius: 10,
+    marginBottom: 20,
+  },
+  picker: {
+    width: '100%',
+    height: 50,
+  },
   signupButton: {
     width: '100%',
     height: 50,
@@ -181,34 +195,12 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 20,
+    marginTop: 10,
   },
   signupButtonText: {
     color: '#fff',
     fontSize: 16,
     fontWeight: '600',
-  },
-  orText: {
-    color: '#999',
-    marginVertical: 10,
-  },
-  googleButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: '#F5F5F5',
-    borderRadius: 10,
-    paddingVertical: 12,
-    paddingHorizontal: 20,
-    width: '100%',
-  },
-  googleIcon: {
-    width: 24,
-    height: 24,
-    marginRight: 10,
-  },
-  googleText: {
-    fontSize: 16,
-    color: '#333',
   },
   signinContainer: {
     flexDirection: 'row',
