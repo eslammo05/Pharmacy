@@ -21,7 +21,7 @@ const originalCategories = [
 ];
 
 const originalFeatured = [
-  { id: '1', name: 'Panadol', price: '20 EGP', description: 'دواء لتسكين الألم.' , image :'https://www.bing.com/th/id/OIP.9qAXo8GMIP76CQsI9KUraQHaIp?w=162&h=185&c=8&rs=1&qlt=90&o=6&dpr=1.3&pid=3.1&rm=2'},
+  { id: '1', name: 'Panadol', price: '20 EGP', description: 'دواء لتسكين الألم.' },
   { id: '2', name: 'Vitamin C', price: '35 EGP', description: 'مقوي طبيعي للمناعة.' },
 ];
 
